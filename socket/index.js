@@ -5,6 +5,7 @@ class Socket {
   #server;
   #isAlive = true;
   #heartbeatInterval;
+  
   constructor(socket, server) {
     this.#socket = socket;
     this.#server = server;
