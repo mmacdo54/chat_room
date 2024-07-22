@@ -5,7 +5,7 @@ class Socket {
 
   constructor(url, chatRoom) {
     this.#url = url;
-    this.#chatRoom = chatRoom
+    this.#chatRoom = chatRoom;
   }
 
   #handleMessage(message) {
@@ -13,13 +13,26 @@ class Socket {
       const parsedMessage = JSON.parse(message);
       switch (parsedMessage.action) {
         case 'create-room':
-          this.#chatRoom.addRoom(parsedMessage.data.room)
+          this.#chatRoom.addRoom(parsedMessage.data.room);
+        case 'message-room':
+          this.#chatRoom.messageRoom(parsedMessage.data);
         default:
-          return
+          return;
       }
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
+  }
+
+  messageRoom(room, message) {
+    this.#socket.send(
+      JSON.stringify({ action: 'message-room', data: { room, message } })
+    );
+    this.#chatRoom.messageRoom({ room, message });
+  }
+
+  joinRoom(room) {
+    this.#socket.send(JSON.stringify({ action: 'join-room', data: { room } }));
   }
 
   async connect() {
@@ -33,8 +46,8 @@ class Socket {
         reject();
       };
       ws.onmessage = (ev) => {
-        this.#handleMessage(ev.data)
-      }
+        this.#handleMessage(ev.data);
+      };
     });
   }
 }

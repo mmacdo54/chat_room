@@ -34,6 +34,7 @@ class ChatServer {
     if (this.#rooms[room].includes(socket)) {
       return;
     }
+    console.log(socket);
     this.#rooms[room].push(socket);
   }
 
@@ -54,7 +55,7 @@ class ChatServer {
     }
 
     this.#rooms[room].forEach((s) => {
-      if (this.#rooms[room].includes(socket)) {
+      if (s === socket) {
         return;
       }
       s.getSocket().send(
